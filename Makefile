@@ -1,23 +1,73 @@
-NAME = fillit
-SRCS = check.c main.c move_tetri.c parsing.c solver.c display.c\
-		validation.c verifications.c cleaning.c
-OBJS = check.o main.o move_tetri.o parsing.o solver.o display.o\
-		validation.o verifications.o cleaning.o
-FLAGS = -Wall -Werror -Wextra
+NAME = lem-in
 
-all: $(NAME)
+OPTION = ./includes/lem_in.h
 
-$(NAME):
-	@make -C libft/ re
-	@clang $(FLAGS) -I libft -c $(SRCS)
-	@clang $(FLAGS) -o $(NAME) $(OBJS) -I libft/ -L libft/ -lft
+INC = -Iincludes
+OBJDIR = obj
+SRCDIR = src
+LIBFTDIR = libft
+
+SRCS_NAMES = 	main.c\
+				output.c\
+				path.c\
+				print_map.c\
+				print_output.c\
+				ants.c\
+				algo.c\
+				bfs.c\
+				free_algo.c\
+				list_flow.c\
+				list_path.c\
+				find_path.c\
+				queue.c\
+				reverse.c\
+				check_hash.c\
+				free_parsing.c\
+				get_source_sink.c\
+				list_edges.c\
+				list_vertices.c\
+				parsing.c\
+				split.c\
+				stringify.c\
+
+OBJS_NAMES = $(SRCS_NAMES:.c=.o)
+
+SRCS = $(addprefix $(SRCDIR)/,$(SRCS_NAMES))
+OBJS = $(addprefix $(OBJDIR)/,$(OBJS_NAMES))
+
+CC = gcc 
+CFLAGS = -g -Wall -Werror -Wextra
+
+LIBFT = libft/libft.a 
+
+all: $(OBJS) $(NAME)
+
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
+
+$(LIBFT): FORCE
+	@make -C $(LIBFTDIR)
+
+$(NAME): $(OBJS) $(LIBFT) $(OPTION)
+	@ $(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	@echo "Made lem-in !"
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@ $(CC) $(INC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@make -C libft/ clean
-	@/bin/rm -rf $(OBJS)
+	@make clean -C libft
+	@-rm -rf $(OBJS)
+	@echo "Cleaned lem-in !"	
 
-fclean: clean
-	@make -C libft/ fclean
-	@/bin/rm -rf $(NAME)
+fclean:
+	@make fclean -C libft
+	@-rm -rf $(OBJS)
+	@-rm -f $(NAME)
+	@echo "Fcleaned lem-in !"	
 
 re: fclean all
+
+.PHONY: clean fclean re all
+
+FORCE: 
